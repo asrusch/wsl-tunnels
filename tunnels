@@ -57,7 +57,7 @@ function wsl_locations() {
 
 if [ $# -eq 0 ]; # If no input, show available locations
 then
-    show_locations
+    wsl_locations
     exit 1
 else
     jump_host=${1//[^a-zA-Z0-9]/}
