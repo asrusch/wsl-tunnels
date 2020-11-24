@@ -13,7 +13,7 @@
 # - Open Firefox with the Tunnels profile:
 #    - Preferences -> General -> Network Settings -> Manual proxy configuration
 #        SOCKS HOST: localhost
-#        Port: 2222
+#        Port: 2080
 #        SOCKS v5: check
 
 ##### Defaults
@@ -27,26 +27,26 @@ set -e
 export PATH="$PATH:/mnt/c/Program Files/Putty"
 export PATH="$PATH:/mnt/c/Program Files/Mozilla Firefox"
 
-function start_tunnel() {
-  putty.exe -D 2222 $USER@$ssh_server > /dev/null 2>&1 &
+function wsl_tunnel() {
+  putty.exe -D 2080 $USER@$ssh_server > /dev/null 2>&1 &
 }
 
-function launch_firefox() {
+function wsl_firefox() {
   firefox.exe -P $firefox_profile $client_url > /dev/null 2>&1 &
 }
 
-function get_client() {  
+function wsl_client() {  
   while IFS=',' read -r client_service ssh_server client_url || [ -n "$line" ]; do
     if [[ $client_service == $jump_host ]]
       then
-        start_tunnel "$ssh_server"
+        wsl_tunnel "$ssh_server"
         sleep 1
-        launch_firefox "$client_service"
+        wsl_firefox "$client_service"
     fi  
   done < $config
 }
 
-function show_locations() {
+function wsl_locations() {
     echo Usage: `basename $0` '{location}' 1>&2
     echo ""
     echo "Available locations in" $config
@@ -60,7 +60,7 @@ then
     show_locations
     exit 1
 else
-    jump_host=$1
-    get_client "$jump_host"
+    jump_host=${1//[^a-zA-Z0-9]/}
+    wsl_client "$jump_host"
 fi
 
