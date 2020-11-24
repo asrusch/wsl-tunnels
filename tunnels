@@ -1,0 +1,63 @@
+#!/bin/bash
+# WSL Client Tunnels
+# by Greg Lawler and Andy Rusch
+
+#### Prerequsites ####
+# Firefox 64-bit installed
+# Putty 64-bit installed (https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)
+# Your WSL Username and key are on jump_host
+
+#### Firefox Config ####
+# - Open Firefox and enter about:profiles in the URL bar
+# - Create a new profile called "Tunnels"
+# - Open Firefox with the Tunnels profile:
+#    - Preferences -> General -> Network Settings -> Manual proxy configuration
+#        SOCKS HOST: localhost
+#        Port: 2222
+#        SOCKS v5: check
+
+##### Defaults
+ : ${config:=tunnels.conf}
+ : ${firefox_profile:=Tunnels}
+
+# Ensure Putty and Firefox are in $PATH.
+export PATH="$PATH:/mnt/c/Program Files/Putty"
+export PATH="$PATH:/mnt/c/Program Files/Mozilla Firefox"
+
+function start_tunnel() {
+  putty.exe -D 2222 $USER@$ssh_server > /dev/null 2>&1 &
+}
+
+function launch_firefox() {
+  firefox.exe -P $firefox_profile $client_url > /dev/null 2>&1 &
+}
+
+function get_client() {  
+  while IFS=',' read -r client_service ssh_server client_url || [ -n "$line" ]; do
+    if [[ $client_service == $jump_host ]]
+      then
+        start_tunnel "$ssh_server"
+        sleep 1
+        launch_firefox "$client_service"
+    fi  
+  done < $config
+}
+
+function show_locations() {
+    echo Usage: `basename $0` '{location}' 1>&2
+    echo ""
+    echo "Available locations in" $config
+    while IFS=',' read -r client_service ssh_server client_url; do
+        echo "$client_service" 
+    done < $config
+}
+
+if [ $# -eq 0 ]; # If no input, show available locations
+then
+    show_locations
+    exit 1
+else
+    jump_host=$1
+    get_client "$jump_host"
+fi
+
