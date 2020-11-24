@@ -2,7 +2,7 @@
 # WSL Client Tunnels
 # by Greg Lawler and Andy Rusch
 
-#### Prerequsites ####
+#### Prerequisites ####
 # Firefox 64-bit installed
 # Putty 64-bit installed (https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)
 # Your WSL Username and key are on jump_host
