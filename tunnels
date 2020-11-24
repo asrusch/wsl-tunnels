@@ -20,6 +20,9 @@
  : ${config:=tunnels.conf}
  : ${firefox_profile:=Tunnels}
 
+# Exit on error
+set -e
+
 # Ensure Putty and Firefox are in $PATH.
 export PATH="$PATH:/mnt/c/Program Files/Putty"
 export PATH="$PATH:/mnt/c/Program Files/Mozilla Firefox"
