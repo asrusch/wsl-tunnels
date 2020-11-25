@@ -60,7 +60,6 @@ then
     wsl_locations
     exit 1
 else
-    jump_host=${1//[^a-zA-Z0-9]/}
+    jump_host=$1
     wsl_client "$jump_host"
 fi
-
