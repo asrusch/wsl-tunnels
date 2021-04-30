@@ -32,7 +32,7 @@ function stop-all {
 	ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $2}' | xargs kill -9
 	ps -ef | grep ssh | grep 2080 | grep -v grep | awk '{print $2}' | xargs kill -9
 	show-status
-	}
+}
 
 function usage_message {
     echo `basename $0`: ERROR: $* 1>&2
@@ -51,7 +51,7 @@ function show_locations() {
 
 function show-status {
 	ps auxw | grep -v -e autossh -e grep | grep -q "D 2080" && echo "Dynamic SSH tunnel running..." || echo "No dynamic SSH tunnels running..."
-	}
+}
 
 function launch_firefox() {
     # Start the Firefox profile
