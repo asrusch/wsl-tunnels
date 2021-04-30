@@ -39,6 +39,7 @@ function usage_message {
     echo Usage: `basename $0` '{start|stop|status}' 1>&2
     exit 1
 }
+
 function show_locations() {
     echo Usage: `basename $0` '{location|stop|status}' 1>&2
     echo ""
