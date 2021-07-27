@@ -28,6 +28,7 @@ export PATH="$PATH:/mnt/c/Program Files/Mozilla Firefox"
 
 function stop-all {
     current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
+    # Exit if no tunnels running
     if [ -z "$current_tunnel" ]; then
         echo "No tunnel found"
         exit 1
@@ -40,11 +41,11 @@ function stop-all {
 
 function usage_message {
     echo `basename $0`: ERROR: $* 1>&2
-    echo Usage: `basename $0` '{start|stop|status}' 1>&2
+    echo Usage: `basename $0` '{start|stop|status|ssh}' 1>&2
     exit 1
 }
 function show_locations() {
-    echo Usage: `basename $0` '{location|stop|status}' 1>&2
+    echo Usage: `basename $0` '{location|stop|status|ssh}' 1>&2
     echo ""
     echo "Available locations in" $config
     while IFS=',' read -r client_service ssh_server client_url; do
@@ -75,7 +76,7 @@ function get_client() {
         if [[ $client_service == $jump_host ]]
         then
             start_tunnel "$ssh_server"
-            sleep 1
+            sleep 2
             launch_firefox "$client_url"
             echo "Launching Firefox..." $client_url
         show-status
@@ -85,6 +86,7 @@ function get_client() {
 
 function start_ssh() {
     current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
+    # Exit if no tunnel running
     if [ -z "$current_tunnel" ]; then
         echo "No tunnel found"
         exit 1
