@@ -17,29 +17,28 @@
 #        SOCKS v5: check
 
 ##### Defaults
-# - change for your needs
- : ${config:=~/wsl-browsertunnel/tunnels.conf}
+ : ${config:=~/git-oo/oo-bin/tunnels.conf}
  : ${firefox_profile:=Tunnels}
-
-# Ensure Firefox is in $PATH.
-export PATH="$PATH:/mnt/c/Program Files/Mozilla Firefox"
 
 # Exit on error
 set -e
 
+# Ensure Putty and Firefox are in $PATH.
+export PATH="$PATH:/mnt/c/Program Files/Mozilla Firefox"
+
 function stop-all {
-	echo "Stopping autossh sessions..."
-	ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $2}' | xargs kill -9
-	ps -ef | grep ssh | grep 2080 | grep -v grep | awk '{print $2}' | xargs kill -9
-	show-status
-}
+    current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
+    echo "Stopping autossh sessions to $current_tunnel..."
+    ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $2}' | xargs kill -9
+    ps -ef | grep ssh | grep 2080 | grep -v grep | awk '{print $2}' | xargs kill -9
+    show-status
+    }
 
 function usage_message {
     echo `basename $0`: ERROR: $* 1>&2
     echo Usage: `basename $0` '{start|stop|status}' 1>&2
     exit 1
 }
-
 function show_locations() {
     echo Usage: `basename $0` '{location|stop|status}' 1>&2
     echo ""
@@ -50,8 +49,9 @@ function show_locations() {
 }
 
 function show-status {
-	ps auxw | grep -v -e autossh -e grep | grep -q "D 2080" && echo "Dynamic SSH tunnel running..." || echo "No dynamic SSH tunnels running..."
-}
+    current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
+    ps auxw | grep -v -e autossh -e grep | grep -q "D 2080" && echo "Dynamic SSH tunnel running to $current_tunnel..." || echo "No dynamic SSH tunnels running..."
+    }
 
 function launch_firefox() {
     # Start the Firefox profile
@@ -60,11 +60,10 @@ function launch_firefox() {
 
 function start_tunnel {
     # Exit if existing autossh session detected
-    ps auxw | grep -v -e autossh -e grep | grep -q "D 2080" && echo "SSH tunnel already running..." && exit 1
-	echo "Starting dynamic SSH tunnel $client_service..."
-    # Open tunnel
+    current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
+    ps auxw | grep -v -e autossh -e grep | grep -q "D 2080" && echo "SSH tunnel already running to $current_tunnel..." && exit 1
+    echo "Starting dynamic SSH tunnel $client_service..."
     autossh -N -M 25000 -D 2080 -o ServerAliveInterval=3 -o ServerAliveCountMax=3  $ssh_server > /dev/null 2>&1 &
-	show-status
 }
 
 function get_client() {
@@ -75,9 +74,18 @@ function get_client() {
             sleep 1
             launch_firefox "$client_url"
             echo "Launching Firefox..." $client_url
-            # exit 1
+        show-status
         fi
     done < $config
+}
+
+function start_ssh() {
+    current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
+    if [ -z "$current_tunnel" ]; then
+        echo "No tunnel found"
+        exit 1
+    fi
+    ssh $current_tunnel
 }
 
 if [ $# -eq 0 ]; # If no input, show available locations
@@ -92,6 +100,9 @@ else
     elif [ $jump_host == "status" ]
     then
         show-status
+    elif [ $jump_host == "ssh" ]
+    then
+        start_ssh
     else
         get_client "$jump_host"
     fi
