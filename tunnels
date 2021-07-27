@@ -28,6 +28,10 @@ export PATH="$PATH:/mnt/c/Program Files/Mozilla Firefox"
 
 function stop-all {
     current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
+    if [ -z "$current_tunnel" ]; then
+        echo "No tunnel found"
+        exit 1
+    fi
     echo "Stopping autossh sessions to $current_tunnel..."
     ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $2}' | xargs kill -9
     ps -ef | grep ssh | grep 2080 | grep -v grep | awk '{print $2}' | xargs kill -9
