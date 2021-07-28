@@ -13,10 +13,11 @@ Modify tunnels.conf with the Location/pretty name, hostname, and URLs to open. R
 * Firefox 64-bit installed (Windows)
 * WSL Username and pubkey are on the destination hosts
 * Firefox profile "Tunnels" is configured with SOCKS Proxy on port 2080:
-        about:profiles in the URL bar
+        <code>about:profiles in the URL bar
         Create a new profile called "Tunnels"
         Open Firefox with the "Tunnels" profile
         Go to Preferences -> General -> Network Settings -> Manual proxy configuration
         SOCKS HOST: ''localhost''
         Port: ''2080''
         SOCKS v5: check
+        </code>
