@@ -2,7 +2,7 @@
 Use this program to create SSH tunnels to predefined hosts and open a set of webpages with Firefox using the proxy.
 
 ## Usage
-Modify tunnels.conf with the Location/pretty name, hostname, and URLs to open. Run ''tunnels <location>'' to start.
+Modify tunnels.conf with the Location/pretty name, hostname, and URLs to open. Run `tunnels <location>` to start.
 
 `tunnels stop` to stop the tunnel.<br>
 `tunnels status` to view status.<br>
