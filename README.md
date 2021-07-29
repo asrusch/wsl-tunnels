@@ -19,4 +19,4 @@ Modify tunnels.conf with the Location/pretty name, hostname, and URLs to open. R
 
 `tunnels stop` to stop the tunnel.<br>
 `tunnels status` to view status.<br>
-`tunnels ssh` to start an ssh session to the open tunnel hostname.<br>
+`tunnels ssh` to start an ssh session to the established tunnel hostname.<br>
