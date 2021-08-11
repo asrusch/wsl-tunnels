@@ -76,10 +76,16 @@ function get_client() {
         if [[ $client_service == $jump_host ]]
         then
             start_tunnel "$ssh_server"
-            sleep 2
+            sleep 3
+            # Don't launch Firefox if tunnel not started
+            current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
+            if [ -z "$current_tunnel" ]; then
+                echo "Tunnel not started, exiting..."
+                exit 1
+            fi
+            show-status
             launch_firefox "$client_url"
             echo "Launching Firefox..." $client_url
-        show-status
         fi
     done < $config
 }
