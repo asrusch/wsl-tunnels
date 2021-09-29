@@ -1,30 +1,16 @@
 #!/bin/bash
-# WSL Client Tunnels
+# WSL RDP Client Tunnels
 # by Greg Lawler and Andy Rusch
 
 #### Prerequisites ####
-# Firefox 64-bit installed
 # autossh package is installed
 # Your WSL Username and key are on jump_host
 
-#### Firefox Config ####
-# - Open Firefox and enter about:profiles in the URL bar
-# - Create a new profile called "Tunnels"
-# - Open Firefox with the Tunnels profile:
-#    - Preferences -> General -> Network Settings -> Manual proxy configuration
-#        SOCKS HOST: localhost
-#        Port: 2080
-#        SOCKS v5: check
-
 ##### Defaults
- : ${config:=./tunnels.conf}
- : ${firefox_profile:=Tunnels}
+ : ${config:=./rdptunnels.conf}
  : ${ssh_config:=~/.ssh/config}
 # Exit on error
 set -e
-
-# Ensure Putty and Firefox are in $PATH.
-export PATH="$PATH:/mnt/c/Program Files/Mozilla Firefox"
 
 function stop-all {
     current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
@@ -41,26 +27,26 @@ function stop-all {
 
 function usage_message {
     echo `basename $0`: ERROR: $* 1>&2
-    echo Usage: `basename $0` '{start|stop|status|ssh}' 1>&2
+    echo Usage: `basename $0` '{start|stop|status}' 1>&2
     exit 1
 }
 function show_locations() {
-    echo Usage: `basename $0` '{location|stop|status|ssh}' 1>&2
+    echo Usage: `basename $0` '{location|stop|status}' 1>&2
     echo ""
     echo "Available locations in" $config
-    while IFS=',' read -r client_service ssh_server client_url; do
+    while IFS=',' read -r client_service ssh_server rdp_host; do
         echo "$client_service" 
     done < $config
 }
 
 function show-status {
     current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
-    ps auxw | grep -v -e autossh -e grep | grep -q "D 2080" && echo "Dynamic SSH tunnel running to $current_tunnel..." || echo "No dynamic SSH tunnels running..."
+    ps auxw | grep -v -e autossh -e grep | grep -q "D 2080" && echo "Local SSH tunnel running to $current_tunnel..." || echo "No dynamic SSH tunnels running..."
     }
 
-function launch_firefox() {
-    # Start the Firefox profile
-    firefox.exe -P $firefox_profile $client_url > /dev/null 2>&1 &
+function launch_rdp() {
+    # Start the RDP Session
+    mstsc.exe /w:1920 /h:1080 127.0.0.1:33389 > /dev/null 2>&1 &
 }
 
 function start_tunnel {
@@ -68,37 +54,28 @@ function start_tunnel {
     current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
     ps auxw | grep -v -e autossh -e grep | grep -q "D 2080" && echo "SSH tunnel already running to $current_tunnel..." && exit 1
     echo "Starting dynamic SSH tunnel $client_service..."
-    autossh -N -M 25000 -D 2080 -o ServerAliveInterval=3 -o ServerAliveCountMax=3 -F $ssh_config $ssh_server > /dev/null 2>&1 &
+    autossh -N -M 25000 -L 33389:$rdp_host:3389 -o ServerAliveInterval=3 -o ServerAliveCountMax=3 -F $ssh_config $ssh_server > /dev/null 2>&1 &
 }
 
 function get_client() {
-    while IFS=',' read -r client_service ssh_server client_url || [ -n "$line" ]; do
+    while IFS=',' read -r client_service ssh_server rdp_host || [ -n "$line" ]; do
         if [[ $client_service == $jump_host ]]
         then
             start_tunnel "$ssh_server"
             sleep 3
-            # Don't launch Firefox if tunnel not started
+            # Don't launch if tunnel not started
             current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
             if [ -z "$current_tunnel" ]; then
                 echo "Tunnel not started, exiting..."
                 exit 1
             fi
             show-status
-            launch_firefox "$client_url"
-            echo "Launching Firefox..." $client_url
+            launch_rdp
+            echo "Launching RDP..." $client_url
         fi
     done < $config
 }
 
-function start_ssh() {
-    current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
-    # Exit if no tunnel running
-    if [ -z "$current_tunnel" ]; then
-        echo "No tunnel found"
-        exit 1
-    fi
-    ssh -F $ssh_config $current_tunnel
-}
 
 if [ $# -eq 0 ]; # If no input, show available locations
 then
@@ -112,9 +89,6 @@ else
     elif [ $jump_host == "status" ]
     then
         show-status
-    elif [ $jump_host == "ssh" ]
-    then
-        start_ssh
     else
         get_client "$jump_host"
     fi
