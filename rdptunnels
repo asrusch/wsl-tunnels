@@ -13,15 +13,15 @@
 set -e
 
 function stop-all {
-    current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
+    current_tunnel=`ps -ef | grep autossh | grep 33389 | grep -v grep | awk '{print $NF}'`
     # Exit if no tunnels running
     if [ -z "$current_tunnel" ]; then
         echo "No tunnel found"
         exit 1
     fi
     echo "Stopping autossh sessions to $current_tunnel..."
-    ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $2}' | xargs kill -9
-    ps -ef | grep ssh | grep 2080 | grep -v grep | awk '{print $2}' | xargs kill -9
+    ps -ef | grep autossh | grep 33389 | grep -v grep | awk '{print $2}' | xargs kill -9
+    ps -ef | grep ssh | grep "L 25000" | grep -v grep | awk '{print $2}' | xargs kill -9
     show-status
     }
 
@@ -40,20 +40,20 @@ function show_locations() {
 }
 
 function show-status {
-    current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
-    ps auxw | grep -v -e autossh -e grep | grep -q "D 2080" && echo "Local SSH tunnel running to $current_tunnel..." || echo "No dynamic SSH tunnels running..."
+    current_tunnel=`ps -ef | grep autossh | grep 33389 | grep -v grep | awk '{print $NF}'`
+    ps auxw | grep -v -e autossh -e grep | grep -q 33389 && echo "Local SSH tunnel running to $current_tunnel..." || echo "No Local SSH tunnels running..."
     }
 
 function launch_rdp() {
     # Start the RDP Session
-    mstsc.exe /w:1920 /h:1080 127.0.0.1:33389 > /dev/null 2>&1 &
+    mstsc.exe /w:1920 /h:1080 /v:127.0.0.1:33389 > /dev/null 2>&1 &
 }
 
 function start_tunnel {
     # Exit if existing autossh session detected
     current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
-    ps auxw | grep -v -e autossh -e grep | grep -q "D 2080" && echo "SSH tunnel already running to $current_tunnel..." && exit 1
-    echo "Starting dynamic SSH tunnel $client_service..."
+    ps auxw | grep -v -e autossh -e grep | grep -q 33389 && echo "SSH tunnel already running to $current_tunnel..." && exit 1
+    echo "Starting Local SSH tunnel $client_service..."
     autossh -N -M 25000 -L 33389:$rdp_host:3389 -o ServerAliveInterval=3 -o ServerAliveCountMax=3 -F $ssh_config $ssh_server > /dev/null 2>&1 &
 }
 
@@ -64,10 +64,10 @@ function get_client() {
             start_tunnel "$ssh_server"
             sleep 3
             # Don't launch if tunnel not started
-            current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
+            current_tunnel=`ps -ef | grep autossh | grep 33389 | grep -v grep | awk '{print $NF}'`
             if [ -z "$current_tunnel" ]; then
                 echo "Tunnel not started, exiting..."
-                exit 1
+            #    exit 1
             fi
             show-status
             launch_rdp
