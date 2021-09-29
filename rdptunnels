@@ -67,7 +67,7 @@ function get_client() {
             current_tunnel=`ps -ef | grep autossh | grep 33389 | grep -v grep | awk '{print $NF}'`
             if [ -z "$current_tunnel" ]; then
                 echo "Tunnel not started, exiting..."
-            #    exit 1
+                exit 1
             fi
             show-status
             launch_rdp
