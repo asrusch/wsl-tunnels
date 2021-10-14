@@ -102,7 +102,7 @@ function start_ssh() {
 
 if [ $# -eq 0 ]; # If no input, show available locations
 then
-    show_locations
+    show-status
     exit 1
 else
     jump_host=${1//[^a-zA-Z0-9]/-} # Sanitize the input a bit
