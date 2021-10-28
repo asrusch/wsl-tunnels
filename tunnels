@@ -23,7 +23,7 @@
 # Exit on error
 set -e
 
-# Ensure Putty and Firefox are in $PATH.
+# Ensure Firefox is in $PATH.
 export PATH="$PATH:/mnt/c/Program Files/Mozilla Firefox"
 
 function stop-all {
