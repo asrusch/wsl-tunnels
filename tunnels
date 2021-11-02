@@ -55,9 +55,7 @@ function show_locations() {
 
 function show-status {
     current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
-    ps auxw | grep -v -e autossh -e grep | grep -q "D 2080" && echo "Dynamic SSH tunnel running to $current_tunnel..." && exit 1
-    ps auxw | grep -v -e autossh -e grep | grep -q "L 33389" && echo "RDP tunnel already running..." && exit 1
-    echo "No dynamic SSH tunnels running..."
+    ps auxw | grep -v -e autossh -e grep | grep -q "D 2080" && echo "Dynamic SSH tunnel running to $current_tunnel..." || echo "No dynamic SSH tunnels running..."
     }
 
 function launch_firefox() {
