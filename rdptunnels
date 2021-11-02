@@ -22,7 +22,6 @@ function stop-all {
     echo "Stopping autossh sessions to $current_tunnel..."
     ps -ef | grep autossh | grep 33389 | grep -v grep | awk '{print $2}' | xargs kill -9
     ps -ef | grep ssh | grep "L 25000" | grep -v grep | awk '{print $2}' | xargs kill -9
-    show-status
     }
 
 function usage_message {
