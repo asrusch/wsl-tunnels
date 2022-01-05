@@ -1,5 +1,5 @@
 # wsl-browsertunnel
-Use this program to create SSH tunnels to predefined hosts and open a set of webpages with Firefox using the proxy.
+Use these programs to create SSH tunnels to predefined hosts and open a set of webpages with Firefox using the proxy or start an RDP Session over the tunnel.
 
 ## Prerequisites
 - WSL with autossh package installed
