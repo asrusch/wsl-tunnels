@@ -21,12 +21,12 @@ Modify tunnels and rdptunnels with config file locations.
 
 **Tunnels:**
 
-`tunnels <location>` to open tunnel and Firefox window.
-`tunnels` to view status.
-`tunnels stop` to stop the tunnel.
+`tunnels <location>` to open tunnel and Firefox window.<br>
+`tunnels` to view status.<br>
+`tunnels stop` to stop the tunnel.<br>
 `tunnels ssh` to start an ssh session to the established tunnel hostname.
 
 **RDP Tunnels:**
 
-`rdptunnels <location>` to open tunnel and launch RDP session.
+`rdptunnels <location>` to open tunnel and launch RDP session.<br>
 `rdptunnels stop` to stop the tunnel.
