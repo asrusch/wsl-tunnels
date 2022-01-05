@@ -17,6 +17,14 @@ Use this program to create SSH tunnels to predefined hosts and open a set of web
 ## Usage
 Modify tunnels.conf with the Location/pretty name, hostname, and URLs to open. Run `tunnels <location>` to start.
 
+Modify tunnels and rdptunnels with config file locations.
+
+#Tunnels
+`tunnels <location>` to open tunnel and Firefox window.<br>
 `tunnels` to view status.<br>
 `tunnels stop` to stop the tunnel.<br>
 `tunnels ssh` to start an ssh session to the established tunnel hostname.<br>
+
+#RDP Tunnels
+`rdptunnels <location>` to open tunnel and launch RDP session.
+`rdptunnels stop` to stop the tunnel.
