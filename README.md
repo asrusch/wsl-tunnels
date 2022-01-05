@@ -19,12 +19,14 @@ Modify tunnels.conf with the Location/pretty name, hostname, and URLs to open. R
 
 Modify tunnels and rdptunnels with config file locations.
 
-Tunnels:
+**Tunnels:**
+
 `tunnels <location>` to open tunnel and Firefox window.
 `tunnels` to view status.
 `tunnels stop` to stop the tunnel.
 `tunnels ssh` to start an ssh session to the established tunnel hostname.
 
-RDP Tunnels:
+**RDP Tunnels:**
+
 `rdptunnels <location>` to open tunnel and launch RDP session.
 `rdptunnels stop` to stop the tunnel.
