@@ -12,7 +12,7 @@
 # Exit on error
 set -e
 
-function stop-all {
+function stop_all {
     current_tunnel=`ps -ef | grep autossh | grep 33389 | grep -v grep | awk '{print $NF}'`
     # Exit if no tunnels running
     if [ -z "$current_tunnel" ]; then
@@ -26,11 +26,11 @@ function stop-all {
 
 function usage_message {
     echo `basename $0`: ERROR: $* 1>&2
-    echo Usage: `basename $0` '{start|stop|status}' 1>&2
+    echo Usage: `basename $0` '{client|stop|status|locations}' 1>&2
     exit 1
 }
 function show_locations() {
-    echo Usage: `basename $0` '{location|stop|status}' 1>&2
+    echo Usage: `basename $0` '{client|stop|status|locations}' 1>&2
     echo ""
     echo "Available locations in" $config
     while IFS=',' read -r client_service ssh_server rdp_host; do
@@ -38,7 +38,7 @@ function show_locations() {
     done < $config
 }
 
-function show-status {
+function show_status {
     current_tunnel=`ps -ef | grep autossh | grep 33389 | grep -v grep | awk '{print $NF}'`
     ps auxw | grep -v -e autossh -e grep | grep -q 33389 && echo "Local SSH tunnel running to $current_tunnel..." || echo "No Local SSH tunnels running..."
     }
@@ -68,7 +68,7 @@ function get_client() {
                 echo "Tunnel not started, exiting..."
                 exit 1
             fi
-            show-status
+            show_status
             launch_rdp
             echo "Launching RDP..." $client_url
         fi
@@ -76,18 +76,21 @@ function get_client() {
 }
 
 
-if [ $# -eq 0 ]; # If no input, show available locations
+if [ $# -eq 0 ]; # If no input, show status
 then
-    show_locations
+    show_status
     exit 1
 else
     jump_host=${1//[^a-zA-Z0-9]/-} # Sanitize the input a bit
     if [ $jump_host == "stop" ]
     then
-        stop-all
+        stop_all
+    elif [ $jump_host == "locations" ]
+    then
+        show_locations
     elif [ $jump_host == "status" ]
     then
-        show-status
+        show_status
     else
         get_client "$jump_host"
     fi
