@@ -1,4 +1,4 @@
-#!/bin/bash
+#/bin/bash
 # WSL Client Tunnels
 # by Greg Lawler and Andy Rusch
 
@@ -16,10 +16,11 @@
 #        Port: 2080
 #        SOCKS v5: check
 
-##### Defaults
+#### Defaults
  : ${config:=./tunnels.conf}
  : ${firefox_profile:=Tunnels}
  : ${ssh_config:=~/.ssh/config}
+
 # Exit on error
 set -e
 
@@ -44,6 +45,7 @@ function usage_message {
     echo Usage: `basename $0` '{client|stop|status|ssh}' 1>&2
     exit 1
 }
+
 function show_locations() {
     echo Usage: `basename $0` '{client|stop|status|ssh}' 1>&2
     echo ""
@@ -67,11 +69,9 @@ function launch_firefox() {
 function start_tunnel {
     # Exit if existing autossh session detected
     current_dyn_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
-    current_loc_tunnel=`ps -ef | grep autossh | grep 33389 | grep -v grep | awk '{print $NF}'`
     ps auxw | grep -v -e autossh -e grep | grep -q "D 2080" && echo "SSH tunnel already running to $current_dyn_tunnel..." && exit 1
-    ps auxw | grep -v -e autossh -e grep | grep -q "L 33389" && echo "RDP tunnel already running to $current_loc_tunnel..." && exit 1
     echo "Starting dynamic SSH tunnel to $client_service..."
-    autossh -N -M 25000 -D 2080 -o ServerAliveInterval=3 -o ServerAliveCountMax=3 -F $ssh_config $ssh_server > /dev/null 2>&1 &
+    autossh -N -M 25005 -D 2080 -o ServerAliveInterval=3 -o ServerAliveCountMax=3 -F $ssh_config $ssh_server > /dev/null 2>&1 &
 }
 
 function get_client() {
