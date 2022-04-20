@@ -53,7 +53,7 @@ function start_tunnel {
     current_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
     ps auxw | grep -v -e autossh -e grep | grep -q 33389 && echo "SSH tunnel already running to $current_tunnel..." && exit 1
     echo "Starting Local SSH tunnel $client_service..."
-    autossh -N -M 25000 -L 33389:$rdp_host:$rdp_port -o ServerAliveInterval=3 -o ServerAliveCountMax=3 -F $ssh_config $ssh_server > /dev/null 2>&1 &
+    autossh -N -M 25000 -L 33389:$rdp_host:$rdp_port -o ServerAliveInterval=3 -o ServerAliveCountMax=30 -F $ssh_config $ssh_server > /dev/null 2>&1 &
 }
 
 function get_client() {
