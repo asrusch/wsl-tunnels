@@ -71,7 +71,7 @@ function start_tunnel {
     current_dyn_tunnel=`ps -ef | grep autossh | grep 2080 | grep -v grep | awk '{print $NF}'`
     ps auxw | grep -v -e autossh -e grep | grep -q "D 2080" && echo "SSH tunnel already running to $current_dyn_tunnel..." && exit 1
     echo "Starting dynamic SSH tunnel to $client_service..."
-    autossh -N -M 25005 -D 2080 -o ServerAliveInterval=3 -o ServerAliveCountMax=30 -F $ssh_config $ssh_server > /dev/null 2>&1 &
+    autossh -N -M 0 -D 2080 -o ServerAliveInterval=3 -o ServerAliveCountMax=30 -F $ssh_config $ssh_server > /dev/null 2>&1 &
 }
 
 function get_client() {
