@@ -1,0 +1,5 @@
+Host *
+    KeepAlive yes
+    ServerAliveInterval 5
+    ServerAliveCountMax 30
+    StrictHostKeyChecking no
