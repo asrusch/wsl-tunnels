@@ -13,7 +13,6 @@ Use these programs to create SSH tunnels to predefined hosts and open a set of w
 7. Run bootstrap script
     - `~/wsl-tunnel/wsl-bootstrap/bootstrap.sh`
     - Enter user password when prompted
-    - You will not see any feedback (like *) when entering characters
 8. SSH keys have been added to the various tunnel hosts
 9. Close and re-open your terminal session for the various changes to take effect
 10. Set up Tunnels profile in Firefox
